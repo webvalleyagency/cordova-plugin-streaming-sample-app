@@ -26,4 +26,38 @@ function onDeviceReady() {
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
+
+    document.getElementById('playVideo1').addEventListener('click', () => playTestVideo('https://player.vimeo.com/external/256637652.m3u8?s=bdeda21075fabc08510bdfd6c0f285ca5aa95097'));
+    document.getElementById('playVideo2').addEventListener('click', () => playTestVideo('https://fast.wistia.net/embed/medias/fb0z73tr79.m3u8'));
+    document.getElementById('playAudio').addEventListener('click', playTestAudio);
+}
+
+function playTestVideo(url) {
+    var options = {
+        successCallback: function() {
+            console.log('Video was closed without error.');
+        },
+        errorCallback: function(errMsg) {
+            console.log(`Error! ${errMsg}`);
+        },
+        orientation: 'landscape',
+        shouldAutoClose: true,  // true(default)/false
+        controls: true // true(default)/false. Used to hide controls on fullscreen
+    };
+    window.plugins.streamingMedia.playVideoAtTime(url, 5000, options);
+}
+
+function playTestAudio() {
+    var options = {
+        bgColor: '#FFFFFF',
+        bgImageScale: 'fit', // other valid values: 'stretch', 'aspectStretch'
+        keepAwake: false, // prevents device from sleeping. true is default. Android only.
+        successCallback: function() {
+            console.log('Player closed without error.');
+        },
+        errorCallback: function(errMsg) {
+            console.log(`Error! ${errMsg}`);
+        }
+    };
+    window.plugins.streamingMedia.playAudioAtTime('https://s3.amazonaws.com/yoga-burn/follow-along-audio/Yoga+Burn+Meditation+Solution+Spirit.mp3', 50000, options);
 }

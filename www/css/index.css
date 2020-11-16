@@ -51,6 +51,10 @@ body {
                                    /* offset horizontal: half of text area width */
 }
 
+.test-buttons button {
+    margin-bottom: 20px;
+}
+
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
     .app {
