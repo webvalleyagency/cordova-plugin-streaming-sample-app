@@ -29,13 +29,123 @@ function onDeviceReady() {
 
     document
         .getElementById('playVideo1')
-        .addEventListener('click', () => playTestVideo('https://player.vimeo.com/external/256637652.m3u8?s=bdeda21075fabc08510bdfd6c0f285ca5aa95097', 5000));
+        .addEventListener('click', () => playTestVideoExo('https://player.vimeo.com/external/256637652.m3u8?s=bdeda21075fabc08510bdfd6c0f285ca5aa95097', 5000));
     document
         .getElementById('playVideo2')
-        .addEventListener('click', () => playTestVideo('https://fast.wistia.net/embed/medias/fb0z73tr79.m3u8', 8000));
+        .addEventListener('click', () => playTestVideoExo('https://fast.wistia.net/embed/medias/fb0z73tr79.m3u8', 8000));
     document
         .getElementById('playAudio')
-        .addEventListener('click', () => playTestAudio('https://s3.amazonaws.com/yoga-burn/follow-along-audio/Yoga+Burn+Meditation+Solution+Spirit.mp3', 50000));
+        .addEventListener('click', () => playTestAudioExo('https://s3.amazonaws.com/yoga-burn/follow-along-audio/Yoga+Burn+Meditation+Solution+Spirit.mp3', 50000));
+}
+
+function playTestVideoExo(url, startTimeInMs) {
+    var params = {
+        url: url,
+        userAgent: 'YogaBurnAppPlayer', // default is 'ExoPlayerPlugin'
+        aspectRatio: 'FIT_SCREEN', // default is FIT_SCREEN
+        hideTimeout: 5000, // Hide controls after this many milliseconds, default is 5 sec
+        autoPlay: true, // When set to false stream will not automatically start
+        seekTo: 50 * 1000, // Start playback 10 minutes into video specified in ms, default is 0
+        forwardTime: 10 * 1000, // Amount of time in ms to use when skipping forward, default is 1 min
+        rewindTime: 10 * 1000, // Amount of time in ms to use when skipping backward, default is 1 min
+        showBuffering: true, // When buffering, player will show indicator at the top of the screen, default is false
+        controller: { // If this object is not present controller will not be visible
+            //streamImage: 'http://url.to/channel.png',
+            //streamTitle: 'Cool channel / movie',
+            hideProgress: false, // Hide entire progress timebar
+            hidePosition: false, // If timebar is visible hide current position from it
+            hideDuration: false, // If timebar is visible Hide stream duration from it
+            controlIcons: {
+            //    'exo_rew': null, // Set to null to remove the button from the player
+            //    'exo_play': 'http://url.to/play.png',
+            //    'exo_pause': 'http://url.to/pause.png',
+                //'exo_ffwd': null, // Buttons not included in configuration will show up as default ExoPlayer buttons
+            },
+            textColor: '#ffffffff', // These colors can be any valid Android color
+            buttonsColor: '#ffffffff', // This example uses hex values including alpha (first byte)
+            bufferingColor: '#ffffffff' // Alpha of 'ff' makes it 100% opaque
+        }
+    };
+
+    var successCallback = function(json) {
+        console.log('exoplayer event :: ', JSON.stringify(json));
+
+        if(json.playbackState === "STATE_READY") {
+            //window.ExoPlayer.seekTo(50 * 1000)
+        }
+
+        if(json.eventType === "TOUCH_EVENT" && json.eventAction === "ACTION_DOWN") {
+            window.ExoPlayer.showController();
+        }
+
+        if(json.eventType === "KEY_EVENT" && json.eventAction === "ACTION_DOWN" && json.eventKeycode === "KEYCODE_BACK") {
+            window.ExoPlayer.close();
+        }
+
+        if(json.eventType === "STOP_EVENT") {
+            console.log('exoplyer event :: stop :: ', json.duration);
+        }
+    };
+
+    var errorCallback = function(error) {
+    };
+
+    window.ExoPlayer.show(params, successCallback, errorCallback);
+}
+
+function playTestAudioExo(url, startTimeInMs) {
+    var params = {
+        url: url,
+        userAgent: 'YogaBurnAppPlayer', // default is 'ExoPlayerPlugin'
+        aspectRatio: 'FIT_SCREEN', // default is FIT_SCREEN
+        hideTimeout: 5000, // Hide controls after this many milliseconds, default is 5 sec
+        autoPlay: true, // When set to false stream will not automatically start
+        seekTo: 50 * 1000, // Start playback 10 minutes into video specified in ms, default is 0
+        forwardTime: 10 * 1000, // Amount of time in ms to use when skipping forward, default is 1 min
+        rewindTime: 10 * 1000, // Amount of time in ms to use when skipping backward, default is 1 min
+        showBuffering: true, // When buffering, player will show indicator at the top of the screen, default is false
+        controller: { // If this object is not present controller will not be visible
+            //streamImage: 'http://url.to/channel.png',
+            //streamTitle: 'Cool channel / movie',
+            hideProgress: false, // Hide entire progress timebar
+            hidePosition: false, // If timebar is visible hide current position from it
+            hideDuration: false, // If timebar is visible Hide stream duration from it
+            controlIcons: {
+                //    'exo_rew': null, // Set to null to remove the button from the player
+                //    'exo_play': 'http://url.to/play.png',
+                //    'exo_pause': 'http://url.to/pause.png',
+                //'exo_ffwd': null, // Buttons not included in configuration will show up as default ExoPlayer buttons
+            },
+            textColor: '#ffffffff', // These colors can be any valid Android color
+            buttonsColor: '#ffffffff', // This example uses hex values including alpha (first byte)
+            bufferingColor: '#ffffffff' // Alpha of 'ff' makes it 100% opaque
+        }
+    };
+
+    var successCallback = function(json) {
+        console.log('exoplayer event :: ', JSON.stringify(json));
+
+        if(json.playbackState === "STATE_READY") {
+            //window.ExoPlayer.seekTo(50 * 1000)
+        }
+
+        if(json.eventType === "TOUCH_EVENT" && json.eventAction === "ACTION_DOWN") {
+            window.ExoPlayer.showController();
+        }
+
+        if(json.eventType === "KEY_EVENT" && json.eventAction === "ACTION_DOWN" && json.eventKeycode === "KEYCODE_BACK") {
+            window.ExoPlayer.close();
+        }
+
+        if(json.eventType === "STOP_EVENT") {
+            console.log('exoplyer event :: stop :: ', json.duration);
+        }
+    };
+
+    var errorCallback = function(error) {
+    };
+
+    window.ExoPlayer.show(params, successCallback, errorCallback);
 }
 
 function playTestVideo(url, startTimeInMs) {
