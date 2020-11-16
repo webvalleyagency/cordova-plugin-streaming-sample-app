@@ -27,37 +27,53 @@ function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
 
-    document.getElementById('playVideo1').addEventListener('click', () => playTestVideo('https://player.vimeo.com/external/256637652.m3u8?s=bdeda21075fabc08510bdfd6c0f285ca5aa95097'));
-    document.getElementById('playVideo2').addEventListener('click', () => playTestVideo('https://fast.wistia.net/embed/medias/fb0z73tr79.m3u8'));
-    document.getElementById('playAudio').addEventListener('click', playTestAudio);
+    document
+        .getElementById('playVideo1')
+        .addEventListener('click', () => playTestVideo('https://player.vimeo.com/external/256637652.m3u8?s=bdeda21075fabc08510bdfd6c0f285ca5aa95097', 5000));
+    document
+        .getElementById('playVideo2')
+        .addEventListener('click', () => playTestVideo('https://fast.wistia.net/embed/medias/fb0z73tr79.m3u8', 8000));
+    document
+        .getElementById('playAudio')
+        .addEventListener('click', () => playTestAudio('https://s3.amazonaws.com/yoga-burn/follow-along-audio/Yoga+Burn+Meditation+Solution+Spirit.mp3', 50000));
 }
 
-function playTestVideo(url) {
+function playTestVideo(url, startTimeInMs) {
     var options = {
-        successCallback: function() {
-            console.log('Video was closed without error.');
-        },
-        errorCallback: function(errMsg) {
-            console.log(`Error! ${errMsg}`);
-        },
         orientation: 'landscape',
         shouldAutoClose: true,  // true(default)/false
-        controls: true // true(default)/false. Used to hide controls on fullscreen
+        controls: true, // true(default)/false. Used to hide controls on fullscreen
+        successCallback,
+        errorCallback
     };
-    window.plugins.streamingMedia.playVideoAtTime(url, 5000, options);
+    window.plugins.streamingMedia.playVideoAtTime(url, startTimeInMs, options);
 }
 
-function playTestAudio() {
+function playTestAudio(url, startTimeInMs) {
     var options = {
         bgColor: '#FFFFFF',
         bgImageScale: 'fit', // other valid values: 'stretch', 'aspectStretch'
         keepAwake: false, // prevents device from sleeping. true is default. Android only.
-        successCallback: function() {
-            console.log('Player closed without error.');
-        },
-        errorCallback: function(errMsg) {
-            console.log(`Error! ${errMsg}`);
-        }
+        successCallback,
+        errorCallback
     };
-    window.plugins.streamingMedia.playAudioAtTime('https://s3.amazonaws.com/yoga-burn/follow-along-audio/Yoga+Burn+Meditation+Solution+Spirit.mp3', 50000, options);
+    window.plugins.streamingMedia.playAudioAtTime(url, startTimeInMs, options);
+}
+
+function successCallback(result) {
+    console.log('Player closed without error.');
+    setMediaPlayerStatistics(result);
+}
+
+function errorCallback(result) {
+    console.log(`Error! ${result.errorMessage}`);
+    setMediaPlayerStatistics(result);
+}
+
+function setMediaPlayerStatistics(playerResult) {
+    console.log('Result', playerResult);
+    document.getElementById('timeStoppedAt').innerText = playerResult.currentPositionInMs ? playerResult.currentPositionInMs : 0;
+    document.getElementById('wasMediaFinished').innerText = playerResult.finishedTheMedia ? playerResult.finishedTheMedia : false;
+    document.getElementById('mediaDuration').innerText = playerResult.mediaDurationInMs ? playerResult.mediaDurationInMs : false;
+    document.getElementById('errorMessage').innerText = playerResult.errorMessage ? playerResult.errorMessage : 'None';
 }
