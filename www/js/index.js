@@ -43,6 +43,8 @@ function playTestVideo(url, startTimeInMs) {
         orientation: 'landscape',
         shouldAutoClose: true,  // true(default)/false
         controls: true, // true(default)/false. Used to hide controls on fullscreen
+        title: 'Best Video',
+        subtitle: 'By Webvalley',
         successCallback,
         errorCallback
     };
